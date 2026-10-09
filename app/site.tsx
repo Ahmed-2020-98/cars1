@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { ArrowLeft, ArrowUpLeft, CalendarDays, CarFront, Check, ChevronLeft, Clock3, Droplets, Menu, RefreshCw, ShieldCheck, Sparkles, Wallet, X, CalendarCheck, Download, CircleCheck } from "lucide-react";
+import { ArrowLeft, ArrowUpLeft, CalendarDays, CarFront, Check, Clock3, Droplets, Menu, RefreshCw, ShieldCheck, Sparkles, Wallet, X, CalendarCheck, Download, CircleCheck } from "lucide-react";
 import { services, vehicles, money, dateKey, dateLabel, timeLabel, type ServiceId, type VehicleId } from "@/lib/catalog";
 
 type Booking = { reference: string; name: string; model: string; service: ServiceId; vehicle: VehicleId; day: string; hour: number; duration: number; total: number; status: string };
@@ -69,14 +69,14 @@ export default function DetailingSite() {
   <a href="#main" className="skip-link">انتقل إلى المحتوى</a>
   <header className="site-header">
    <div className="container header-inner"><Brand />
-    <nav aria-label="التنقل الرئيسي" className={mobile ? "nav-links open" : "nav-links"}>
+    <nav id="main-navigation" aria-label="التنقل الرئيسي" className={mobile ? "nav-links open" : "nav-links"}>
      <a href="#services" onClick={() => setMobile(false)}>خدماتنا</a>
      <a href="#experience" onClick={() => setMobile(false)}>تجربة لمعة</a>
      <a href="#questions" onClick={() => setMobile(false)}>الأسئلة الشائعة</a>
      <button onClick={() => { setManageOpen(true); setMobile(false); }}>حجوزاتي</button>
     </nav>
     <button className="button primary header-book" onClick={() => openBooking()}>احجز موعدك <ArrowUpLeft size={18} aria-hidden="true" /></button>
-    <button className="menu-button icon-button" aria-label={mobile ? "إغلاق القائمة" : "فتح القائمة"} aria-expanded={mobile} onClick={() => setMobile(!mobile)}>{mobile ? <X /> : <Menu />}</button>
+    <button className="menu-button icon-button" aria-label={mobile ? "إغلاق القائمة" : "فتح القائمة"} aria-expanded={mobile} aria-controls="main-navigation" onClick={() => setMobile(!mobile)}>{mobile ? <X /> : <Menu />}</button>
    </div>
   </header>
   <main id="main">
@@ -84,19 +84,19 @@ export default function DetailingSite() {
     <img className="hero-photo" src="/images/hero.webp" width="1776" height="888" alt="سيارة بطلاء لامع داخل استوديو عناية بالسيارات" fetchPriority="high" />
     <div className="hero-shade" />
     <div className="container hero-content">
-     <div className="hero-copy"><div className="hero-intro"><span className="tiny-shine">✧</span> عناية تليق بسيارتك</div>
+     <div className="hero-copy"><div className="hero-intro"><Sparkles size={18} strokeWidth={1.5} aria-hidden="true" /> عناية تليق بسيارتك</div>
       <h1 id="hero-heading">رجّع إحساس<br />أول يوم.</h1>
       <p>من أول غسلة لآخر لمعة، نهتم بكل تفصيلة.<br className="desktop-break" /> اختر عناية سيارتك… واترك الباقي لنا.</p>
-      <div className="hero-actions"><button className="button champagne" onClick={() => openBooking()}>احجز وقتًا لسيارتك <ArrowUpLeft size={21} aria-hidden="true" /></button><a href="#services" className="hero-link">اكتشف الخدمات <ArrowLeft size={18} aria-hidden="true" /></a></div>
+      <div className="hero-actions"><button className="button champagne" onClick={() => openBooking()}>احجز موعدك <ArrowUpLeft size={21} aria-hidden="true" /></button><a href="#services" className="hero-link">اكتشف الخدمات <ArrowLeft size={18} aria-hidden="true" /></a></div>
       <div className="hero-note"><ShieldCheck size={17} aria-hidden="true" /><span>عناية دقيقة. سعر واضح. موعد يناسبك.</span></div>
      </div>
-     <div className="image-caption" aria-hidden="true"><span className="caption-line" /><span>الجمال في التفاصيل</span><span className="caption-en">The art of detailing</span></div>
+     <div className="image-caption"><span className="caption-line" aria-hidden="true" /><span>الجمال في التفاصيل</span><span className="caption-en">عناية بالطلاء، من أول انعكاس.</span></div>
     </div>
    </section>
 
    <div className="container quick-book-wrap">
     <form className="quick-book" onSubmit={e => { e.preventDefault(); openBooking(); }}>
-     <div className="quick-intro"><CalendarDays size={26} aria-hidden="true" /><div><strong>سيارتك تستاهل.</strong><span>ابدأ حجزك من هنا</span></div></div>
+     <div className="quick-intro"><CalendarDays size={26} aria-hidden="true" /><div><strong>موعد لسيارتك.</strong><span>اختر عنايتك، ثم وقتك</span></div></div>
      <label className="quick-field"><span>الخدمة</span><select value={service} onChange={e => setService(e.target.value as ServiceId)}>{services.map(s => <option value={s.id} key={s.id}>{s.name}</option>)}</select></label>
      <label className="quick-field"><span>نوع السيارة</span><select value={vehicle} onChange={e => setVehicle(e.target.value as VehicleId)}>{vehicles.map(v => <option value={v.id} key={v.id}>{v.name}</option>)}</select></label>
      <label className="quick-field date-field"><span>التاريخ المناسب</span><input type="date" required value={day} min={dateKey()} max={dateKey(60)} onChange={e => setDay(e.target.value)} /></label>
@@ -112,14 +112,14 @@ export default function DetailingSite() {
 
    <section className="services-section section" id="services" aria-labelledby="services-heading">
     <div className="container">
-     <div className="section-heading"><div><p className="section-kicker">لكل سيارة عنايتها</p><h2 id="services-heading">اختر اللمعة المناسبة لك.</h2></div><p className="heading-description">نظافة يومية، عناية متكاملة، أو حماية تدوم.<br />ثلاث باقات، واهتمام واحد بكل التفاصيل.</p></div>
+     <div className="section-heading"><div><p className="section-kicker">باقات العناية</p><h2 id="services-heading">لكل سيارة،<br />لمعتها الخاصة.</h2></div><p className="heading-description">نظافة يومية، عناية متكاملة، أو حماية تدوم.<br />ثلاث باقات، واهتمام واحد بكل التفاصيل.</p></div>
      <div className="service-grid">{services.map((s, i) => { const Icon = serviceIcons[i]; return <article className={"service-card" + (i === 1 ? " featured" : "")} key={s.id}>
-      <div className="service-top"><div className="service-icon"><Icon size={28} strokeWidth={1.5} aria-hidden="true" /></div>{i === 1 && <span className="recommend-badge">عناية شاملة</span>}<span className="service-duration"><Clock3 size={14} aria-hidden="true" />{s.duration}</span></div>
-      <h3>{s.name}</h3><p className="service-subtitle">{s.subtitle}</p>
+      <div className={"service-visual service-visual-" + s.id}><img src={i === 1 ? "/images/detailing.webp" : "/images/hero.webp"} alt="" width="600" height="300" loading="lazy" /><span className="service-visual-shade" /><div className="service-top"><div className="service-icon"><Icon size={28} strokeWidth={1.5} aria-hidden="true" /></div>{i === 1 && <span className="recommend-badge">عناية شاملة</span>}<span className="service-duration"><Clock3 size={14} aria-hidden="true" />{s.duration}</span></div></div>
+      <div className="service-body"><h3>{s.name}</h3><p className="service-subtitle">{s.subtitle}</p>
       <div className="price"><span className="price-from">ابتداءً من</span><div><strong>{money(s.price)}</strong><span>ر.س <small>/ للسيارة</small></span></div></div>
       <div className="service-divider" />
       <ul>{s.features.map(f => <li key={f}><Check size={17} aria-hidden="true" />{f}</li>)}</ul>
-      <button className={"button full " + (i === 1 ? "champagne" : "outline")} onClick={() => openBooking(s.id)}>احجز هذه الباقة <ArrowUpLeft size={18} aria-hidden="true" /></button>
+      <button className={"button full " + (i === 1 ? "champagne" : "outline")} onClick={() => openBooking(s.id)}>احجز هذه الباقة <ArrowUpLeft size={18} aria-hidden="true" /></button></div>
      </article>; })}</div>
      <p className="pricing-note">الأسعار التجريبية للسيدان وشاملة الضريبة. يظهر فرق حجم السيارة قبل حفظ الطلب.</p>
     </div>
@@ -139,7 +139,7 @@ export default function DetailingSite() {
 
    <section className="faq-section section" id="questions" aria-labelledby="faq-heading"><div className="container faq-grid"><div><p className="section-kicker">قبل موعدك</p><h2 id="faq-heading">كل اللي<br />في بالك.</h2><p>تفاصيل صغيرة تساعدك تختار<br />العناية المناسبة وأنت مطمئن.</p><span className="faq-art" aria-hidden="true"><Sparkles size={76} strokeWidth={0.8} /></span></div><div className="faq-list">{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span className="faq-plus" aria-hidden="true" /></summary><p>{answer}</p></details>)}</div></div></section>
 
-   <section className="container final-cta"><div><span className="cta-star" aria-hidden="true">✧</span><div><h2>لأن كل طريق يبدأ بلمعة.</h2><p>خلّ العناية علينا، واستمتع بالطريق.</p></div></div><button className="button champagne" onClick={() => openBooking()}>احجز موعدك الآن <ArrowUpLeft size={20} aria-hidden="true" /></button></section>
+   <section className="container final-cta"><div><Sparkles className="cta-star" size={56} strokeWidth={1} aria-hidden="true" /><div><h2>لأن كل طريق يبدأ بلمعة.</h2><p>خلّ العناية علينا، واستمتع بالطريق.</p></div></div><button className="button champagne" onClick={() => openBooking()}>احجز موعدك الآن <ArrowUpLeft size={20} aria-hidden="true" /></button></section>
   </main>
   <footer className="footer"><div className="container footer-main"><Brand /><p>عناية لسيارتك، وراحة لبالك.</p><div><a href="#services">الخدمات</a><button onClick={() => setManageOpen(true)}>حجوزاتي</button><button onClick={() => setPrivacy(true)}>الخصوصية</button></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} لمعة. عناية في كل تفصيلة.</span><span>نسخة تجريبية · المحتوى والأسعار توضيحية، والحجوزات لا تُرسل إلى مركز فعلي.</span></div></footer>
   {bookingOpen && <BookingDialog initialService={service} initialVehicle={vehicle} initialDay={day || dateKey(1)} onClose={closeBooking} />}
