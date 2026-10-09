@@ -3,24 +3,25 @@
 موقع عربي RTL متكامل: باقات العناية، حساب السعر حسب حجم السيارة، مواعيد متاحة، حجز في ثلاث خطوات، إيصال قابل للتحميل، وإدارة الطلب وإلغاؤه.
 
 ## حالة المحتوى
-اسم «لمعة»، الأسعار، ساعات العمل، وصف الخدمات والصور توضيحية. النسخة منشورة بوصول خاص لصاحب الموقع. الطلبات تحفظ في قاعدة بيانات الموقع فقط؛ لا يوجد اتصال بمركز فعلي أو بوابة دفع أو رسائل SMS. الصور مولّدة بأداة image_gen المدمجة. راجع docs/image-prompts.md.
+اسم «لمعة»، الأسعار، ساعات العمل، وصف الخدمات والصور توضيحية. الطلبات تحفظ في قاعدة بيانات MySQL فقط؛ لا يوجد اتصال بمركز فعلي أو بوابة دفع أو رسائل SMS. الصور مولّدة بأداة image_gen المدمجة. راجع docs/image-prompts.md.
 
 ## التشغيل
-- Node.js >=22.13.0.
+- Next.js عادي على Node.js >=20.9.
 - تثبيت الاعتماديات: npm ci
+- انسخ .env.example إلى .env.local واملأ بيانات MySQL.
 - التطوير: npm run dev -- --port 5188 --hostname 127.0.0.1
 - فحص TypeScript: npx tsc --noEmit
 - البناء: npm run build
-- معاينة البناء: npm start -- --port 5190
-
-استخدم أدوات Sites لإدارة نسخ النشر. المعرف محفوظ في .openai/hosting.json. لا تنشئ موقعًا جديدًا عند التعديل.
+- التشغيل بعد البناء: npm start
 
 ## قاعدة البيانات
-Cloudflare D1 بالاسم DB. التعريفات في db/schema.ts والترحيل الأول في drizzle/0000_tricky_siren.sql. بعد أول بناء فقط، طبّق الترحيل على قاعدة التطوير:
-```sh
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_tricky_siren.sql
-```
-لا تكرر ترحيلًا سبق تطبيقه. منصة Sites تطبق الترحيلات على قاعدة الإنتاج أثناء النشر.
+MySQL عبر mysql2. المتغيرات: DB_HOST، DB_PORT، DB_USER، DB_PASSWORD، DB_NAME. الجداول (bookings و reservations) تُنشأ تلقائيًا بـ CREATE TABLE IF NOT EXISTS عند أول طلب API، فلا توجد خطوة ترحيل يدوية. التعريفات في lib/server.ts.
+
+## النشر على هوستنجر (Business/Cloud)
+1. hPanel ← Databases ← MySQL: أنشئ قاعدة ومستخدمًا وكلمة مرور.
+2. hPanel ← Websites ← Add website ← Node.js Web App ← اختر الدومين، ثم ارفع ملف zip للمشروع (بدون node_modules و .next و .env*) أو اربط مستودع GitHub.
+3. Framework: Next.js، Node 22، Build: npm run build، Start: npm start، وأضف متغيرات DB_* في Environment variables.
+4. تأكد أن سجلات A للدومين و www تشير إلى IP الاستضافة، وفعّل SSL.
 
 ## التخصيص
 - الباقات وأسعارها وأحجام السيارات: lib/catalog.ts.
